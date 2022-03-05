@@ -33,11 +33,13 @@ class LeccionesController extends Controller
         $estado = $request->estado;
         $tipo = $request->tipo;
         $url_contenido = $request->url_contenido;
+        $mensaje_ganar = $request->mensaje_ganar;
+        $mensaje_perder = $request->mensaje_perder;
 
-        return $this->crearLeccion($nombre, $contenido, $estado, $tipo, $url_contenido);
+        return $this->crearLeccion($nombre, $contenido, $estado, $tipo, $url_contenido, null, null, $mensaje_ganar, $mensaje_perder);
     }
 
-    public function crearLeccion($nombre, $contenido, $estado, $tipo, $url_contenido, $intentos_base = null, $porcentaje_ganar = null){
+    public function crearLeccion($nombre, $contenido, $estado, $tipo, $url_contenido, $intentos_base = null, $porcentaje_ganar = null, $mensaje_ganar = null, $mensaje_perder = null){
         $resp["success"] = false;
     
          
@@ -54,6 +56,8 @@ class LeccionesController extends Controller
             $leccion->url_contenido = $url_contenido;
             $leccion->intentos_base = $intentos_base;
             $leccion->porcentaje_ganar = $porcentaje_ganar;
+            $leccion->mensaje_ganar = $mensaje_ganar;
+            $leccion->mensaje_perder = $mensaje_perder;
 
             if($leccion->save()){
                 $resp["success"] = true;
@@ -77,7 +81,7 @@ class LeccionesController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function show(Request $request) {
-        $query = lecciones::select('id', 'nombre', 'contenido', 'estado', 'tipo','intentos_base', 'porcentaje_ganar','created_at');
+        $query = lecciones::select('id', 'nombre', 'contenido', 'estado', 'tipo','intentos_base', 'porcentaje_ganar','mensaje_ganar', 'mensaje_perder', 'created_at');
         if ($request->estado != '') {
             $query->where("estado", $request->estado);
         }
@@ -840,9 +844,10 @@ class LeccionesController extends Controller
         $tipo = $request->tipo;
         $url_contenido = $request->url_contenido;
         $porcentaje_ganar = $request->porcentaje;
+        $mensaje_ganar = $request->mensaje_ganar;
+        $mensaje_perder = $request->mensaje_perder;
 
-
-        $leccion = $this->crearLeccion($nombre, $contenido, $estado, $tipo, $url_contenido, 3, $porcentaje_ganar);
+        $leccion = $this->crearLeccion($nombre, $contenido, $estado, $tipo, $url_contenido, 3, $porcentaje_ganar, $mensaje_ganar, $mensaje_perder);
 
         if($leccion['success'] == true){
             foreach ($request->preguntas as $pre) {
@@ -901,6 +906,8 @@ class LeccionesController extends Controller
         $preguntas = $request->preguntas;
         $respuestasEliminar = $request->respuestasEliminar;
         $preguntasEliminar = $request->preguntasEliminar;
+        $mensaje_ganar = $request->mensaje_ganar;
+        $mensaje_perder = $request->mensaje_perder;
 
         // actualización y/o creación de preguntas y respuestas nuevas
         foreach ($request->preguntas as $pre) {
