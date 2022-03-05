@@ -107,13 +107,16 @@ class LeccionesController extends Controller
             $leccion = lecciones::find($request->id);
 
             if(!empty($leccion)){
-                if ($leccion->contenido != $request->contenido || $leccion->estado != $request->estado || $leccion->nombre != $request->nombre || $leccion->url_contenido != $request->url_contenido || $leccion->tipo != $request->tipo ) {
+                if ($leccion->contenido != $request->contenido || $leccion->estado != $request->estado || $leccion->nombre != $request->nombre || $leccion->url_contenido != $request->url_contenido || $leccion->tipo != $request->tipo || $leccion->mensaje_ganar != $request->mensaje_ganar || $leccion->mensaje_perder != $request->mensaje_perder || $leccion->porcentaje_ganar != $request->porcentaje_ganar ) {
 
                     $leccion->nombre = $request->nombre;
                     $leccion->contenido = $request->contenido;
                     $leccion->estado = $request->estado;
                     $leccion->tipo = $request->tipo;
                     $leccion->url_contenido = $request->url_contenido;
+                    $leccion->mensaje_ganar = $request->mensaje_ganar;
+                    $leccion->mensaje_perder = $request->mensaje_perder;
+                    $leccion->porcentaje_ganar = $request->porcentaje;
                     
                     if ($leccion->save()) {
                         $resp["success"] = true;
@@ -359,6 +362,9 @@ class LeccionesController extends Controller
                     "lecciones.contenido",
                     "lecciones.nombre as nombre", 
                     "lecciones.tipo as tipo",
+                    "lecciones.porcentaje_ganar",
+                    "lecciones.mensaje_ganar",
+                    "lecciones.mensaje_perder",
                     "lpu.fechProgCompleto",
                     "lpu.tiempoVideoProg",
                     "lpu.idProgreso",
@@ -392,6 +398,9 @@ class LeccionesController extends Controller
                     "lecciones.contenido",
                     "lecciones.nombre as nombre", 
                     "lecciones.tipo as tipo",
+                    "lecciones.porcentaje_ganar",
+                    "lecciones.mensaje_ganar",
+                    "lecciones.mensaje_perder",
                     "lpu.fechProgCompleto",
                     "lpu.tiempoVideoProg",
                     "lpu.idProgreso"
@@ -908,6 +917,32 @@ class LeccionesController extends Controller
         $preguntasEliminar = $request->preguntasEliminar;
         $mensaje_ganar = $request->mensaje_ganar;
         $mensaje_perder = $request->mensaje_perder;
+
+
+        $leccion = lecciones::find($request->id);
+
+        if(!empty($leccion)){
+            if ($leccion->mensaje_ganar != $mensaje_ganar || $leccion->mensaje_perder != $mensaje_perder || $leccion->porcentaje_ganar != $porcentaje_ganar ) {
+
+                $leccion->mensaje_ganar = $mensaje_ganar;
+                $leccion->mensaje_perder = $mensaje_perder;
+                $leccion->porcentaje_ganar = $porcentaje_ganar;
+
+                
+                if ($leccion->save()) {
+                    $resp["success"] = true;
+                    $resp["msj"] = "Se han actualizado los datos";
+                }else{
+                    $resp["msj"] = "No se han guardado cambios";
+                }
+            } else {
+                $resp["msj"] = "no hay cambios";
+            }
+
+        }else{
+            $resp["msj"] = "No se ha encontrado la lección";
+        }
+
 
         // actualización y/o creación de preguntas y respuestas nuevas
         foreach ($request->preguntas as $pre) {
